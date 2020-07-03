@@ -1,4 +1,4 @@
-use c_compiler::{Lexer, to_digit, Parser, generate};
+use c_compiler::{Lexer, Parser, generate};
 use std::fs::File;
 use std::env::args;
 use std::io::{Read, Write};
@@ -13,12 +13,12 @@ fn main() {
 
     let parser = Parser::new(test);
     let res = parser.parse();
-
+    //println!("{:?}", res);
     let mut gcc = Command::new("gcc");
 
     if res.is_ok() {
         let asm = generate(res.ok().unwrap());
-        //println!("{}", asm);
+        println!("{}", asm);
         let filename = format!("{}.s", &args[args.len()-1].split(".").collect::<Vec<&str>>()[0]);
         let new_file = File::create(&filename);
         let mut new_file = new_file.expect("File failed to create");
@@ -28,6 +28,8 @@ fn main() {
         gcc.arg("a.out");
         gcc.spawn();
 
+    } else {
+        println!("{:?}", res);
     }
 
 }
